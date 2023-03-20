@@ -1,12 +1,11 @@
 class FibonacciController < ApplicationController
   def fib
-    n = params[:n].to_i
-
-    unless valid_parameter?(n)
+    unless valid_parameter?(params[:n])
       render json: { error: "Invalid parameter: n must be a non-negative half-width integer" }, status: :bad_request
       return
     end
 
+    n = params[:n].to_i
     fib = fibonacci(n)
 
     response = { n: n, fib: fib }
@@ -16,7 +15,11 @@ class FibonacciController < ApplicationController
   private
 
   def valid_parameter?(n)
-    n.is_a?(Integer) && n >= 0 && n.to_s.match?(/\A[0-9]+\z/)
+    return false unless n.present?
+    return false unless n.to_s.match?(/\A[0-9]+\z/)
+
+    n = n.to_i
+    n.is_a?(Integer) && n >= 0
   end
 
   def fibonacci(n)
